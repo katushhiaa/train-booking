@@ -1,0 +1,16 @@
+{
+  "name": "train-ticket-booking-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Prototype for train ticket booking service",
+  "main": "src/server.js",
+  "scripts": {
+  "start": "node src/server.js",
+  "dev": "node --watch src/server.js",
+  "test:journey": "node scripts/test-journey.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "uuid": "^9.0.1"
+  }
+}
