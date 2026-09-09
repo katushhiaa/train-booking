@@ -1,11 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import { store } from "../data/memoryStore.js";
 
-// Час утримання місця до оплати — 15 хвилин
 const HOLD_TIMEOUT_MS = 15 * 60 * 1000;
 
 export class BookingService {
-  // 1. Пошук поїздів за датою та напрямком
   static searchTrains({ date, from, to }) {
     if (!date) {
       const error = new Error("Query parameter 'date' (YYYY-MM-DD) is required.");
@@ -13,7 +11,6 @@ export class BookingService {
       throw error;
     }
 
-    // Звільняємо прострочені місця перед підрахунком
     this._releaseExpiredBookings();
 
     const trains = store.findTrains({ date, from, to });
@@ -28,7 +25,6 @@ export class BookingService {
     });
   }
 
-  // 2. Отримання списку місць конкретного поїзда
   static getTrainSeats(trainId) {
     const train = store.getTrainById(trainId);
     if (!train) {
@@ -52,7 +48,6 @@ export class BookingService {
     };
   }
 
-  // 3. Бронювання місця (переводить у статус PENDING_PAYMENT, а місце в HOLD)
   static createBooking({ trainId, seatId, passengerName }) {
     if (!trainId || !seatId || !passengerName?.trim()) {
       const error = new Error("Fields 'trainId', 'seatId', and 'passengerName' are required.");
@@ -78,14 +73,12 @@ export class BookingService {
 
     if (seat.status !== "AVAILABLE") {
       const error = new Error(`Seat '${seat.seatNumber}' is not available (current status: ${seat.status}).`);
-      error.status = 409; // Conflict
+      error.status = 409;
       throw error;
     }
 
-    // Округлення до цілого числа
     const totalPrice = Math.round(train.price * (seat.priceModifier || 1.0));
 
-    // Блокуємо місце
     store.updateSeatStatus(seatId, "HOLD");
 
     const now = new Date();
@@ -105,7 +98,6 @@ export class BookingService {
     return store.createBooking(booking);
   }
 
-  // 4. Оплата бронювання (імітація платіжного шлюзу)
   static payBooking(bookingId, paymentPayload = {}) {
     this._releaseExpiredBookings();
 
@@ -124,7 +116,7 @@ export class BookingService {
 
     if (booking.status === "EXPIRED") {
       const error = new Error(`Hold time expired for booking '${bookingId}'. Please book a seat again.`);
-      error.status = 410; // Gone
+      error.status = 410;
       throw error;
     }
 
@@ -134,21 +126,18 @@ export class BookingService {
       throw error;
     }
 
-    // Симуляція можливої невдачі оплати за запитом
     if (paymentPayload.simulateFailure) {
       const error = new Error("Payment declined by the payment gateway.");
-      error.status = 402; // Payment Required
+      error.status = 402;
       throw error;
     }
 
-    // Оновлюємо статус бронювання та місця
     store.updateBooking(bookingId, {
       status: "PAID",
       paidAt: new Date().toISOString()
     });
     store.updateSeatStatus(booking.seatId, "BOOKED");
 
-    // Генеруємо квиток
     const train = store.getTrainById(booking.trainId);
     const seat = store.getSeatById(booking.seatId);
 
@@ -179,7 +168,6 @@ export class BookingService {
     };
   }
 
-  // 5. Отримання оформленого квитка
   static getTicketByBookingId(bookingId) {
     const booking = store.getBookingById(bookingId);
     if (!booking) {
@@ -204,7 +192,6 @@ export class BookingService {
     return ticket;
   }
 
-  // Внутрішній хелпер: звільнення прострочених броней
   static _releaseExpiredBookings() {
     const now = new Date();
     store.bookings.forEach((booking) => {

@@ -1,17 +1,13 @@
-# Залежності
 node_modules/
 package-lock.json
 
-# Змінні оточення
 .env
 .env.local
 
-# Логи
 logs/
 *.log
 npm-debug.log*
 
-# Системні файли та кеш IDE
 .DS_Store
 .idea/
 .vscode/

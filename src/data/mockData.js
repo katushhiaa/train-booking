@@ -52,7 +52,6 @@ export const initialTrains = [
 ];
 
 export const initialSeats = [
-  // Поїзд 101: змішані місця (1-й та 2-й клас)
   { id: "seat-101-1", trainId: "train-101", seatNumber: "1A", class: "1st", priceModifier: 1.4, status: "AVAILABLE" },
   { id: "seat-101-2", trainId: "train-101", seatNumber: "1B", class: "1st", priceModifier: 1.4, status: "AVAILABLE" },
   { id: "seat-101-3", trainId: "train-101", seatNumber: "2A", class: "2nd", priceModifier: 1.0, status: "AVAILABLE" },
@@ -60,21 +59,17 @@ export const initialSeats = [
   { id: "seat-101-5", trainId: "train-101", seatNumber: "3A", class: "2nd", priceModifier: 1.0, status: "AVAILABLE" },
   { id: "seat-101-6", trainId: "train-101", seatNumber: "3B", class: "2nd", priceModifier: 1.0, status: "AVAILABLE" },
 
-  // Поїзд 102: повністю розпроданий (для тестування відсутності місць)
   { id: "seat-102-1", trainId: "train-102", seatNumber: "1A", class: "2nd", priceModifier: 1.0, status: "BOOKED" },
   { id: "seat-102-2", trainId: "train-102", seatNumber: "1B", class: "2nd", priceModifier: 1.0, status: "BOOKED" },
   { id: "seat-102-3", trainId: "train-102", seatNumber: "2A", class: "2nd", priceModifier: 1.0, status: "BOOKED" },
 
-  // Поїзд 103: частково зайнятий
   { id: "seat-103-1", trainId: "train-103", seatNumber: "1A", class: "Coupe", priceModifier: 1.0, status: "AVAILABLE" },
   { id: "seat-103-2", trainId: "train-103", seatNumber: "1B", class: "Coupe", priceModifier: 1.0, status: "BOOKED" },
   { id: "seat-103-3", trainId: "train-103", seatNumber: "2A", class: "Coupe", priceModifier: 1.0, status: "AVAILABLE" },
 
-  // Поїзд 201: звичайні вільні місця
   { id: "seat-201-1", trainId: "train-201", seatNumber: "1A", class: "Coupe", priceModifier: 1.0, status: "AVAILABLE" },
   { id: "seat-201-2", trainId: "train-201", seatNumber: "1B", class: "Coupe", priceModifier: 1.0, status: "AVAILABLE" },
 
-  // Поїзд 301: кілька вільних місць
   { id: "seat-301-1", trainId: "train-301", seatNumber: "1A", class: "2nd", priceModifier: 1.0, status: "AVAILABLE" },
   { id: "seat-301-2", trainId: "train-301", seatNumber: "1B", class: "2nd", priceModifier: 1.0, status: "AVAILABLE" },
   { id: "seat-301-3", trainId: "train-301", seatNumber: "2A", class: "1st", priceModifier: 1.3, status: "AVAILABLE" }

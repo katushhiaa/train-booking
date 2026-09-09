@@ -8,7 +8,6 @@ const logStep = (step, title) => {
 
 async function runBookingJourney() {
   try {
-    // 1. Пошук поїздів за датою та напрямком
     logStep(1, "Search trains for '2026-10-15' (Kyiv -> Lviv)");
     const trainsRes = await fetch(`${BASE_URL}/trains?date=2026-10-15&from=Kyiv&to=Lviv`);
     const trainsData = await trainsRes.json();
@@ -22,7 +21,6 @@ async function runBookingJourney() {
       console.log(` - ${t.number}: ${t.departureTime} -> ${t.arrivalTime} | Base: ${t.price} UAH | Available seats: ${t.availableSeatsCount}`);
     });
 
-    // 2. Перевірка крайового випадку: повністю розпроданий поїзд (train-102)
     logStep(2, "Edge case check: Sold-out train (train-102)");
     const soldOutSeatsRes = await fetch(`${BASE_URL}/trains/train-102/seats`);
     const soldOutSeatsData = await soldOutSeatsRes.json();
@@ -32,19 +30,16 @@ async function runBookingJourney() {
       console.log("Verified: Train is correctly marked as fully booked.");
     }
 
-    // 3. Вибір поїзда з вільними місцями (train-101) та перегляд схеми вагону
     logStep(3, "Inspecting seats for available train (train-101)");
     const seatsRes = await fetch(`${BASE_URL}/trains/train-101/seats`);
     const seatsData = await seatsRes.json();
 
-    // Обираємо комфортне місце 1-го класу для перевірки priceModifier
     const firstClassSeat = seatsData.data.seats.find((s) => s.status === "AVAILABLE" && s.class === "1st");
     if (!firstClassSeat) {
       throw new Error("No 1st class seat available.");
     }
     console.log(`Selected Seat: ${firstClassSeat.seatNumber} (${firstClassSeat.class} class, modifier: x${firstClassSeat.priceModifier})`);
 
-    // 4. Бронювання обраного місця
     logStep(4, `Holding seat ${firstClassSeat.seatNumber} for passenger 'Katerina'`);
     const bookingRes = await fetch(`${BASE_URL}/bookings`, {
       method: "POST",
@@ -67,7 +62,6 @@ async function runBookingJourney() {
     console.log(`Total Price: ${booking.totalPrice} UAH (Base 650 * 1.4)`);
     console.log(`Expires At: ${booking.expiresAt}`);
 
-    // 5. Перевірка захисту від конфлікту (подвійне бронювання того ж місця)
     logStep(5, "Conflict test: Attempting to book the same HOLD seat again");
     const conflictRes = await fetch(`${BASE_URL}/bookings`, {
       method: "POST",
@@ -82,7 +76,6 @@ async function runBookingJourney() {
     console.log(`Status Code: ${conflictRes.status} (Expected: 409 Conflict)`);
     console.log(`Server message: "${conflictData.error?.message}"`);
 
-    // 6. Симуляція збою оплати
     logStep(6, "Payment failure simulation");
     const failedPayRes = await fetch(`${BASE_URL}/bookings/${booking.id}/pay`, {
       method: "POST",
@@ -93,7 +86,6 @@ async function runBookingJourney() {
     console.log(`Status Code: ${failedPayRes.status} (Expected: 402 Payment Required)`);
     console.log(`Server message: "${failedPayData.error?.message}"`);
 
-    // 7. Успішна оплата
     logStep(7, "Retrying with successful payment");
     const payRes = await fetch(`${BASE_URL}/bookings/${booking.id}/pay`, {
       method: "POST",
@@ -108,7 +100,6 @@ async function runBookingJourney() {
     console.log(`Payment status: SUCCESS`);
     console.log(`Booking state: ${payData.booking.status}`);
 
-    // 8. Отримання сформованого квитка
     logStep(8, "Fetching final issued ticket");
     const ticketRes = await fetch(`${BASE_URL}/bookings/${booking.id}/ticket`);
     const ticketData = await ticketRes.json();
@@ -118,7 +109,7 @@ async function runBookingJourney() {
     }
 
     const ticket = ticketData.data;
-    console.log("\n🎫 ================= TRAIN TICKET ================= 🎫");
+    console.log("\n================= TRAIN TICKET =================");
     console.log(`Ticket Code : ${ticket.ticketCode}`);
     console.log(`Passenger   : ${ticket.passengerName}`);
     console.log(`Train       : ${ticket.train.number} (${ticket.train.from} -> ${ticket.train.to})`);
@@ -126,11 +117,11 @@ async function runBookingJourney() {
     console.log(`Seat        : ${ticket.seatNumber} (Class: 1st)`);
     console.log(`Amount Paid : ${ticket.amountPaid} UAH`);
     console.log(`Issued At   : ${ticket.issuedAt}`);
-    console.log("====================================================\n");
+    console.log("================================================\n");
 
-    console.log("✅ All edge cases and full booking journey verified successfully!");
+    console.log("All edge cases and full booking journey verified successfully!");
   } catch (error) {
-    console.error("\n❌ Journey failed:", error.message);
+    console.error("\nJourney failed:", error.message);
   }
 }
 

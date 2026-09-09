@@ -8,7 +8,6 @@ class MemoryStore {
     this.tickets = [];
   }
 
-  // Trains
   findTrains({ date, from, to }) {
     return this.trains.filter((train) => {
       const matchDate = !date || train.date === date;
@@ -22,7 +21,6 @@ class MemoryStore {
     return this.trains.find((t) => t.id === id);
   }
 
-  // Seats
   getSeatsByTrainId(trainId) {
     return this.seats.filter((seat) => seat.trainId === trainId);
   }
@@ -39,7 +37,6 @@ class MemoryStore {
     return seat;
   }
 
-  // Bookings
   createBooking(booking) {
     this.bookings.push(booking);
     return booking;
@@ -57,7 +54,6 @@ class MemoryStore {
     return booking;
   }
 
-  // Tickets
   createTicket(ticket) {
     this.tickets.push(ticket);
     return ticket;
